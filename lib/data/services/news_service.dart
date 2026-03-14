@@ -8,9 +8,6 @@ import 'api/api_config.dart';
 class NewsService {
   static const Duration _timeout = Duration(seconds: 20);
 
-  // Backward-compatible endpoint candidates:
-  // - /news        (current API contract)
-  // - /yahoo/news  (legacy/proxy deployments)
   static const List<String> _endpointCandidates = [
     '/news',
     '/yahoo/news',
