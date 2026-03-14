@@ -5,7 +5,10 @@
 [![Android](https://img.shields.io/badge/Android-supported-3DDC84.svg)](https://developer.android.com)
 
 
-![App Icon](assets/icons/app_icon.png)
+<p align="center">
+  <img src="assets/app_icon.png" alt="App Icon" width="120" />
+</p>
+
 # Gryphone Invest
 
 Мобильный симулятор инвестиций на Flutter. Симулируй сделки, изучай прогнозы на основе ИИ и тестируй стратегии — без риска реальных денег.
