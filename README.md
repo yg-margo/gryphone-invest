@@ -9,7 +9,7 @@
   <img src="assets/icons/app_icon.png" alt="App Icon" width="120" />
 </p>
 
-# Gryphone Invest
+<h1 align="center">Gryphone Invest</h1>
 
 Мобильный симулятор инвестиций на Flutter. Симулируй сделки, изучай прогнозы на основе ИИ и тестируй стратегии — без риска реальных денег.
 
