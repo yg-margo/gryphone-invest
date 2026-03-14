@@ -6,7 +6,7 @@
 
 
 <p align="center">
-  <img src="assets/app_icon.png" alt="App Icon" width="120" />
+  <img src="assets/icons/app_icon.png" alt="App Icon" width="120" />
 </p>
 
 # Gryphone Invest
