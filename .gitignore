@@ -1,0 +1,30 @@
+# General
+.DS_Store
+*.log
+*.tmp
+
+# Node / backend
+node_modules/
+.env
+backend/.env
+backend/data/*.db
+backend/data/*.sqlite
+
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Database
+data/*.db
+data/*.sqlite
+data/*.sqlite3
