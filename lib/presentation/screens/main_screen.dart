@@ -6,6 +6,7 @@ import '../../data/providers/market_provider.dart';
 import '../../data/providers/portfolio_provider.dart';
 import '../../data/providers/locale_provider.dart';
 import '../../data/providers/auth_provider.dart';
+import '../../responsive.dart';
 import 'home/home_screen.dart';
 import 'portfolio/portfolio_screen.dart';
 import 'discover/discover_screen.dart';
@@ -37,28 +38,20 @@ class _MainScreenState extends State<MainScreen> {
     final market = _marketProvider;
     final portfolio = _portfolioProvider;
     if (market == null || portfolio == null) return;
-
-    final prices = {
+    portfolio.updatePrices({
       for (final stock in market.stocks) stock.symbol: stock.currentPrice,
-    };
-
-    portfolio.updatePrices(prices);
+    });
   }
 
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-
       _marketProvider = context.read<MarketProvider>();
       _portfolioProvider = context.read<PortfolioProvider>();
-
       _marketProvider!.addListener(_handleMarketUpdate);
-
       _handleMarketUpdate();
-
       _marketProvider!.refreshMarketCorrections(force: true);
     });
   }
@@ -74,12 +67,65 @@ class _MainScreenState extends State<MainScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isRu = context.watch<LocaleProvider>().isRussian;
     final auth = context.watch<AuthProvider>();
+    final isDesktop = AppBreakpoints.isDesktop(context);
+
+    if (isDesktop) {
+      return Scaffold(
+        body: SafeArea(
+          child: Row(
+            children: [
+              NavigationRail(
+                selectedIndex: _currentIndex,
+                onDestinationSelected: (i) => setState(() => _currentIndex = i),
+                extended: MediaQuery.sizeOf(context).width >= 1440,
+                backgroundColor:
+                    isDark ? AppColors.darkSurface : AppColors.lightSurface,
+                selectedIconTheme: const IconThemeData(color: AppColors.primaryLight),
+                selectedLabelTextStyle: const TextStyle(
+                  color: AppColors.primaryLight,
+                  fontWeight: FontWeight.w700,
+                ),
+                destinations: [
+                  NavigationRailDestination(
+                    icon: const Icon(Icons.home_outlined),
+                    selectedIcon: const Icon(Icons.home),
+                    label: Text(AppStrings.get('navHome', isRussian: isRu)),
+                  ),
+                  NavigationRailDestination(
+                    icon: const Icon(Icons.account_balance_wallet_outlined),
+                    selectedIcon: const Icon(Icons.account_balance_wallet),
+                    label: Text(AppStrings.get('navPortfolio', isRussian: isRu)),
+                  ),
+                  NavigationRailDestination(
+                    icon: const Icon(Icons.explore_outlined),
+                    selectedIcon: const Icon(Icons.explore),
+                    label: Text(isRu ? 'Обзор' : 'Discover'),
+                  ),
+                  NavigationRailDestination(
+                    icon: const Icon(Icons.science_outlined),
+                    selectedIcon: const Icon(Icons.science),
+                    label: Text(AppStrings.get('navBacktest', isRussian: isRu)),
+                  ),
+                  NavigationRailDestination(
+                    icon: _NavAvatar(auth: auth, isSelected: false, isDark: isDark),
+                    selectedIcon: _NavAvatar(auth: auth, isSelected: true, isDark: isDark),
+                    label: Text(isRu ? 'Профиль' : 'Profile'),
+                  ),
+                ],
+              ),
+              VerticalDivider(
+                width: 1,
+                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+              ),
+              Expanded(child: _screens[_currentIndex]),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           border: Border(
@@ -114,16 +160,8 @@ class _MainScreenState extends State<MainScreen> {
               label: AppStrings.get('navBacktest', isRussian: isRu),
             ),
             BottomNavigationBarItem(
-              icon: _NavAvatar(
-                auth: auth,
-                isSelected: false,
-                isDark: isDark,
-              ),
-              activeIcon: _NavAvatar(
-                auth: auth,
-                isSelected: true,
-                isDark: isDark,
-              ),
+              icon: _NavAvatar(auth: auth, isSelected: false, isDark: isDark),
+              activeIcon: _NavAvatar(auth: auth, isSelected: true, isDark: isDark),
               label: isRu ? 'Профиль' : 'Profile',
             ),
           ],
@@ -149,7 +187,6 @@ class _NavAvatar extends StatelessWidget {
     final borderColor = isSelected
         ? AppColors.primaryLight
         : (isDark ? AppColors.darkBorder : AppColors.lightBorder);
-
     return Container(
       width: 26,
       height: 26,
@@ -162,8 +199,6 @@ class _NavAvatar extends StatelessWidget {
                   AppColors.primary.withOpacity(isSelected ? 1.0 : 0.5),
                   AppColors.primaryLight.withOpacity(isSelected ? 1.0 : 0.5),
                 ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
               )
             : null,
       ),
